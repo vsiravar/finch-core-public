@@ -1,0 +1,80 @@
+# Workflow to run cdk integration tests with finch
+name: AWS CDK CI
+
+on:
+  workflow_dispatch:
+  
+jobs:
+  build-and-test:
+    runs-on: [self-hosted, macOS, X64]
+    steps:
+      # Cleanup 
+      - name: Cleanup Workspace
+        run: |
+          sudo rm -rf * 
+          sudo rm -rf /opt/finch
+          sudo rm -rf ~/.finch
+          rm -rf /tmp/finch-temp
+          if pgrep '^qemu-system'; then
+            sudo pkill '^qemu-system'
+          fi
+          if pgrep '^socket_vmnet'; then
+            sudo pkill '^socket_vmnet'
+          fi
+        
+      - name: Checkout AWS CDK main branch
+        uses: actions/checkout@v3
+        with:
+          repository: aws/aws-cdk
+          ref: main
+
+      - name: Configure Node.js version
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: yarn install
+
+      # Setting Node options and running lerna build
+      - name: Build with lerna
+        run: | 
+          npx lerna run build
+          npm install -g @aws-cdk/integ-tests
+          npm install -g @aws-cdk/core      
+        env:
+          NODE_OPTIONS: "--max-old-space-size=8192"
+
+      - name: Checkout Finch main branch with submodules
+        uses: actions/checkout@v3
+        with:
+          repository: vsiravar/finch-public
+          ref: vsiravar/cdk-integration-test
+          path: finch-temp
+          submodules: 'recursive'
+
+    # Setup Go using version specified in go.mod
+      - name: Setup Go from Finch's go.mod
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: finch-temp/go.mod
+
+      # Build and Install Finch
+      - name: Build and Install Finch
+        run: |
+          mkdir -p /tmp/finch
+          # move to /tmp because UNIX_PATH_MAX = 104 https://github.com/runfinch/finch/issues/11#issue-1460402755
+          mv finch-temp /tmp
+          cd /tmp/finch-temp
+          sudo make clean 
+          make
+          sudo make install
+          finch vm init
+
+      - name: Run integration tests
+        uses: nick-fields/retry@v2
+        with:
+         timeout_minutes: 180
+         max_attempts: 3
+         # Drop in replacement for docker in CDK https://github.com/aws/aws-cdk/blob/b23252b99559ad1a1f0e05b6936c60f9c52522ff/packages/cdk-assets/README.md?plain=1#L185
+         command: CDK_DOCKER=finch yarn integ-runner --max-workers=1 --directory packages/@aws-cdk
