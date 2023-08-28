@@ -77,4 +77,4 @@ jobs:
          timeout_minutes: 180
          max_attempts: 3
          # Drop in replacement for docker in CDK https://github.com/aws/aws-cdk/blob/b23252b99559ad1a1f0e05b6936c60f9c52522ff/packages/cdk-assets/README.md?plain=1#L185
-         command: CDK_DOCKER=finch yarn integ-runner --max-workers=1 --directory packages/@aws-cdk
+         command: CDK_DOCKER=finch yarn integ-runner --max-workers=1 --directory packages/@aws-cdk-testing/framework-integ
