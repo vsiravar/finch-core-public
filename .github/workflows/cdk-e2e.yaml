@@ -6,7 +6,7 @@ on:
   
 jobs:
   build-and-test:
-    runs-on: [self-hosted, macOS, X64]
+    runs-on: [self-hosted, macOS, ARM64]
     steps:
       # Cleanup 
       - name: Cleanup Workspace
