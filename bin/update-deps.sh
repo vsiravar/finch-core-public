@@ -11,7 +11,7 @@ set -x
 while getopts d: flag
 do
         case "${flag}" in
-            d) dependency_bucket=${OPTARG};;
+            d) dependenecy_bucket=${OPTARG};;
          esac
 done
 [[ -z "$dependency_bucket" ]] && { echo "Error: Dependency bucket not set"; exit 1; }

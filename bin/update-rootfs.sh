@@ -2,8 +2,8 @@
 set -euxo pipefail
 
 DEPENDENCY_CLOUDFRONT_URL="https://deps.runfinch.com/"
-AARCH64_FILENAME_PATTERN="common/aarch64/finch-rootfs-production-arm64-[0-9].*\.tar.zst$"
-AMD64_FILENAME_PATTERN="common/x86-64/finch-rootfs-production-amd64-[0-9].*\.tar.zst$"
+AARCH64_FILENAME_PATTERN="common/aarch64/finch-rootfs-production-arm64-[0-9].*\.tar.gz$"
+AMD64_FILENAME_PATTERN="common/x86-64/finch-rootfs-production-amd64-[0-9].*\.tar.gz$"
 PLATFORM="common"
 AARCH64="aarch64"
 X86_64="x86-64"

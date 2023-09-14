@@ -22,11 +22,8 @@ FINCH_OS_x86_DIGEST := $(or $(FINCH_OS_x86_DIGEST),"sha256:e8d5872454cf25155ce5f
 FINCH_OS_AARCH64_URL := $(or $(FINCH_OS_AARCH64_URL),https://deps.runfinch.com/Fedora-Cloud-Base-38-1.6.aarch64-20230830214718.qcow2)
 FINCH_OS_AARCH64_DIGEST := $(or $(FINCH_OS_AARCH64_DIGEST),"sha256:219a30f1409f8757eaf654dabf378fe0412b9499f877e5c69ad2f24327b1a5f4")
 
-FINCH_ROOTFS_x86_URL := $(or $(FINCH_ROOTFS_x86_URL),https://deps.runfinch.com/common/x86-64/finch-rootfs-production-amd64-1690920103.tar.zst)
+FINCH_ROOTFS_x86_URL := $(or $(FINCH_ROOTFS_x86_URL),https://deps.runfinch.com/common/x86-64/finch-rootfs-production-amd64-1693001442.tar.gz)
 FINCH_ROOTFS_x86_DIGEST := $(or $(FINCH_ROOTFS_x86_DIGEST),"sha256:53f2e329b8da0f6a25e025d1f6cc262ae228402ba615ad095739b2f0ec6babc9")
-# From https://dl.fedoraproject.org/pub/fedora/linux/releases/37/Cloud/aarch64/images/
-FINCH_ROOTFS_AARCH64_URL := $(or $(FINCH_ROOTFS_AARCH64_URL),https://deps.runfinch.com/common/aarch64/finch-rootfs-production-arm64-1690920104.tar.zst)
-FINCH_ROOTFS_AARCH64_DIGEST := $(or $(FINCH_ROOTFS_AARCH64_DIGEST),"sha256:dd48cbf679539d915a2d47d61978e1fe43cb6248d40761d70d3da7b82d630fc5")
 
 LIMA_DEPENDENCY_FILE_NAME ?= lima-and-qemu.tar.gz
 .DEFAULT_GOAL := all
@@ -106,8 +103,8 @@ $(ROOTFS_DOWNLOAD_DIR)/$(FINCH_ROOTFS_BASENAME):
 	mkdir -p $(ROOTFS_DOWNLOAD_DIR)
 	mkdir -p $(OUTDIR)/os
 	curl -L --fail $(FINCH_ROOTFS_URL) > "$(ROOTFS_DOWNLOAD_DIR)/$(FINCH_ROOTFS_BASENAME)"
-	cd $(ROOTFS_DOWNLOAD_DIR) && 7z x $(FINCH_ROOTFS_BASENAME)
-	$(eval FINCH_ROOTFS_BASENAME := $(subst .zst,,$(FINCH_ROOTFS_BASENAME)))
+	cd $(ROOTFS_DOWNLOAD_DIR) && gunzip $(FINCH_ROOTFS_BASENAME)
+	$(eval FINCH_ROOTFS_BASENAME := $(subst .gz,,$(FINCH_ROOTFS_BASENAME)))
 	cp $(ROOTFS_DOWNLOAD_DIR)/$(FINCH_ROOTFS_BASENAME) $(OUTDIR)/os
 
 
