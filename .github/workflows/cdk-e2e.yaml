@@ -3,10 +3,17 @@ name: AWS CDK CI
 
 on:
   workflow_dispatch:
+  # Run every day at 12am
+  schedule:
+    - cron: '0 0 * * *'
   
 jobs:
   build-and-test:
-    runs-on: [self-hosted, macOS, ARM64]
+    strategy:
+      fail-fast: false
+      matrix: 
+        os: [[self-hosted, macos, amd64, 13, test], [self-hosted, macos, amd64, 12, test], [self-hosted, macos, arm64, 13, test], [self-hosted, macos, arm64, 12, test]]
+    runs-on: ${{ matrix.os }}
     steps:
       # Cleanup 
       - name: Cleanup Workspace
