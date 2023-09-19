@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: 
-        os: [[self-hosted, macos, amd64, 13, test], [self-hosted, macos, amd64, 12, test], [self-hosted, macos, arm64, 13, test], [self-hosted, macos, arm64, 12, test], [self-hosted, macos, arm64, 11]]
+        os: [[self-hosted, macos, amd64, 13, test], [self-hosted, macos, amd64, 12, test], [self-hosted, macos, arm64, 13, test], [self-hosted, macos, arm64, 12, test], [self-hosted, macOS, ARM64]]
     runs-on: ${{ matrix.os }}
     steps:
       # Cleanup 
