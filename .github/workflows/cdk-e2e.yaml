@@ -73,6 +73,10 @@ jobs:
           # move to /tmp because UNIX_PATH_MAX = 104 https://github.com/runfinch/finch/issues/11#issue-1460402755
           mv finch-temp /tmp
           cd /tmp/finch-temp
+          # user directories that are mounted in the vm are deleted after each test run by cdk test framework
+          # In finch the file sharing is not synchronous by default so the files still show up in the vm for a bit,
+          # so it's important to sync the host fs with the vm for the cdk testing framework.
+          sed -i '' '/sshfs:/,/9p:/s/cache: null/cache: false/' finch.yaml
           sudo make clean 
           make
           sudo make install
